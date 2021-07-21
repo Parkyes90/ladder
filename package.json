@@ -8,6 +8,7 @@
     "react-scripts": "4.0.3",
     "styled-components": "^5.3.0",
     "styled-reset": "^4.3.4",
+    "terminal-in-react": "^4.3.1",
     "web-vitals": "^1.0.1"
   },
   "devDependencies": {

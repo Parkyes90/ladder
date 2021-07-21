@@ -10,4 +10,7 @@ export const GlobalStyle = createGlobalStyle`
   html {
   font-family: "Inter", 'NotoSansKR', "Helvetica Neue", Helvetica, Arial, "맑은 고딕", malgun gothic, "돋움", Dotum, sans-serif, "Apple Color Emoji", "Noto Color Emoji";
   }
+  #root {
+    height: 100vh;
+  }
 `;

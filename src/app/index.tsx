@@ -2,7 +2,6 @@ import { Header } from "components/header";
 import React from "react";
 import styled from "styled-components";
 import { BASE_COLORS } from "../styles";
-import Terminal from "terminal-in-react";
 
 const Wrapper = styled.div`
   display: flex;
@@ -32,9 +31,7 @@ function App() {
       <Main>
         <div>Test</div>
       </Main>
-      <Footer>
-        <Terminal hideTopBar allowTabs={false} />
-      </Footer>
+      <Footer>footer</Footer>
     </Wrapper>
   );
 }

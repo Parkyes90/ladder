@@ -2,7 +2,7 @@ import { Header } from "components/header";
 import React from "react";
 import styled from "styled-components";
 import { BASE_COLORS } from "../styles";
-
+import Chat from "components/chat";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -31,7 +31,9 @@ function App() {
       <Main>
         <div>Test</div>
       </Main>
-      <Footer>footer</Footer>
+      <Footer>
+        <Chat />
+      </Footer>
     </Wrapper>
   );
 }

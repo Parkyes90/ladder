@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { BASE_COLORS, pxToRem } from "../../styles";
+import * as localforage from "localforage";
 
 interface Comment {
   author: string;
@@ -41,13 +42,14 @@ const Wrapper = styled.div`
     overflow: auto;
     white-space: pre-wrap;
     word-break: break-all;
+    padding: ${pxToRem(8)};
     border-color: ${BASE_COLORS.BLUE_GREY_500};
     color: ${BASE_COLORS.WHITE};
     background-color: ${BASE_COLORS.BLUE_GREY_920};
   }
 `;
 
-const Comment = styled.div`
+const CommentWrapper = styled.div`
   white-space: pre-wrap;
   word-break: break-all;
   padding: ${pxToRem(4, 8)};
@@ -61,6 +63,11 @@ const Chat = () => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
+    localforage.getItem("chat").then((value) => {
+      if (value) {
+        setComments(value as Comment[]);
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -69,14 +76,17 @@ const Chat = () => {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (inputRef.current!.value === "/clear") {
-      setComments([]);
+      localforage.setItem("chat", []).then((value) => {
+        setComments(value);
+      });
     } else {
-      setComments(
-        comments.concat({
-          author: "127.0.0.1",
-          content: inputRef.current!.value,
-        })
-      );
+      const newComments = comments.concat({
+        author: "127.0.0.1",
+        content: inputRef.current!.value,
+      });
+      localforage.setItem("chat", newComments).then((value) => {
+        setComments(value);
+      });
     }
 
     inputRef.current!.value = "";
@@ -87,9 +97,9 @@ const Chat = () => {
       <div ref={commentsRef}>
         {comments.map((comment, index) => {
           return (
-            <Comment
+            <CommentWrapper
               key={index}
-            >{`${comment.author} > ${comment.content}`}</Comment>
+            >{`${comment.author} > ${comment.content}`}</CommentWrapper>
           );
         })}
       </div>

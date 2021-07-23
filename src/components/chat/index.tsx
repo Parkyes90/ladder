@@ -1,7 +1,8 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import * as localforage from "localforage";
 import { CommentWrapper, Wrapper } from "./styles";
-import { useWebRTCOffer } from "../../hooks/useWebRTCOffer";
+import { useWebRtcOffer } from "../../hooks/useWebRtcOffer";
+import { useWebRtcAnswer } from "../../hooks/useWebRtcAnswer";
 
 interface Comment {
   author: string;
@@ -12,8 +13,9 @@ const Chat = () => {
   const [comments, setComments] = useState<Comment[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const commentsRef = useRef<HTMLDivElement>(null);
-  const { offer } = useWebRTCOffer();
-  console.log(offer, "offer");
+  const { offer } = useWebRtcOffer();
+  const { answer } = useWebRtcAnswer(offer);
+  console.log(answer, "answer");
 
   useEffect(() => {
     if (inputRef.current) {

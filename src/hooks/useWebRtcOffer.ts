@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FEATURE_COLORS } from "../styles/colors/features";
 
-export const useWebRTCOffer = () => {
+export const useWebRtcOffer = () => {
   const [offer, setOffer] = useState<RTCSessionDescription | null>(null);
 
   useEffect(() => {

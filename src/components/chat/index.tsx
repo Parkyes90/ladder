@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { BASE_COLORS, pxToRem } from "../../styles";
 import * as localforage from "localforage";
+import { useWebRTC } from "../../hooks/useWebRTC";
 
 interface Comment {
   author: string;
@@ -59,6 +60,9 @@ const Chat = () => {
   const [comments, setComments] = useState<Comment[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const commentsRef = useRef<HTMLDivElement>(null);
+
+  useWebRTC();
+
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();

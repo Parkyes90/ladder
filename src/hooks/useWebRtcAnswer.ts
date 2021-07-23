@@ -3,25 +3,26 @@ import { FEATURE_COLORS } from "../styles/colors/features";
 
 export const useWebRtcAnswer = (offer: RTCSessionDescription | null) => {
   const [answer, setAnswer] = useState<RTCSessionDescription | null>(null);
+  const [answerDataChannel, setAnswerDataChannel] =
+    useState<RTCDataChannel | null>(null);
   useEffect(() => {
     if (offer) {
       const successColor = `color: ${FEATURE_COLORS.SUCCESS}`;
       const remoteConnection = new RTCPeerConnection();
-      let dataChannel: RTCDataChannel;
       remoteConnection.onicecandidate = () => {
         setAnswer(remoteConnection.localDescription);
       };
       remoteConnection.ondatachannel = (rtcDataChannelEvent) => {
-        dataChannel = rtcDataChannelEvent.channel;
-        dataChannel.onmessage = (messageEvent) => {
+        rtcDataChannelEvent.channel.onmessage = (messageEvent) => {
           console.log(messageEvent.data);
         };
-        dataChannel.onopen = () => {
+        rtcDataChannelEvent.channel.onopen = () => {
           console.log("%cConnection OPENED!", successColor);
         };
+        setAnswerDataChannel(rtcDataChannelEvent.channel);
       };
       remoteConnection.setRemoteDescription(offer).then(() => {
-        console.log("%cOFFER SET!!", successColor);
+        console.log("%cOFFER SET!", successColor);
       });
       remoteConnection
         .createAnswer()
@@ -32,5 +33,5 @@ export const useWebRtcAnswer = (offer: RTCSessionDescription | null) => {
     }
   }, [offer]);
 
-  return { answer };
+  return { answer, answerDataChannel };
 };

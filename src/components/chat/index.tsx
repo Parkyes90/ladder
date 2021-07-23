@@ -11,11 +11,23 @@ interface Comment {
 
 const Chat = () => {
   const [comments, setComments] = useState<Comment[]>([]);
+  const [state, setState] = useState<
+    Record<string, RTCSessionDescription | null>
+  >({
+    offer: null,
+    answer: null,
+  });
   const inputRef = useRef<HTMLInputElement>(null);
   const commentsRef = useRef<HTMLDivElement>(null);
-  const { offer } = useWebRtcOffer();
-  const { answer } = useWebRtcAnswer(offer);
-  console.log(answer, "answer");
+  const { offer } = useWebRtcOffer(state.answer);
+  const { answer } = useWebRtcAnswer(state.offer);
+
+  useEffect(() => {
+    setState({
+      offer,
+      answer,
+    });
+  }, [offer, answer]);
 
   useEffect(() => {
     if (inputRef.current) {

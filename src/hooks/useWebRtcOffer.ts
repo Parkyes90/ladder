@@ -1,17 +1,23 @@
 import { useEffect, useState } from "react";
 import { FEATURE_COLORS } from "../styles/colors/features";
 
-export const useWebRtcOffer = () => {
+export const useWebRtcOffer = (answer?: RTCSessionDescription | null) => {
   const [offer, setOffer] = useState<RTCSessionDescription | null>(null);
+  const [offerDataChannel, setOfferDataChannel] =
+    useState<RTCDataChannel | null>(null);
 
   useEffect(() => {
     const localConnection = new RTCPeerConnection();
-    const dataChannel = localConnection.createDataChannel("channel");
-    dataChannel.onmessage = () => {};
-    dataChannel.onopen = () => {
-      console.log("Connection Opened");
-    };
+    if (!offerDataChannel) {
+      setOfferDataChannel(localConnection.createDataChannel("channel"));
+    } else {
+      offerDataChannel.onmessage = () => {};
+      offerDataChannel.onopen = () => {
+        console.log("Connection Opened");
+      };
+    }
     localConnection.onicecandidate = () => {
+      console.log(localConnection.localDescription);
       setOffer(localConnection.localDescription);
     };
     localConnection.createOffer().then((o) => {
@@ -19,7 +25,10 @@ export const useWebRtcOffer = () => {
         console.log("%cSET SUCCESSFULLY", `color: ${FEATURE_COLORS.SUCCESS}`);
       });
     });
-  }, []);
+    if (answer) {
+      localConnection.setRemoteDescription(answer).then();
+    }
+  }, [answer, offerDataChannel]);
 
-  return { offer };
+  return { offer, offerDataChannel };
 };

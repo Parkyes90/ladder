@@ -1,8 +1,7 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import * as localforage from "localforage";
 import { CommentWrapper, Wrapper } from "./styles";
-import { useWebRtcOffer } from "../../hooks/useWebRtcOffer";
-import { useWebRtcAnswer } from "../../hooks/useWebRtcAnswer";
+import { useSocket } from "../../hooks/useSocket";
 
 interface Comment {
   author: string;
@@ -19,16 +18,8 @@ const Chat = () => {
   });
   const inputRef = useRef<HTMLInputElement>(null);
   const commentsRef = useRef<HTMLDivElement>(null);
-  const { offer } = useWebRtcOffer(state.answer);
-  const { answer } = useWebRtcAnswer(state.offer);
-
-  useEffect(() => {
-    setState({
-      offer,
-      answer,
-    });
-  }, [offer, answer]);
-
+  const { socket } = useSocket("/signaling");
+  console.log(socket);
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();

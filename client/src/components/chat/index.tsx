@@ -2,6 +2,9 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import * as localforage from "localforage";
 import { CommentWrapper, Wrapper } from "./styles";
 import { useSocket } from "../../hooks/useSocket";
+import { useWebRtcOffer } from "../../hooks/useWebRtcOffer";
+import { EVENT, OfferResponse, OfferSDPResponse } from "constants/websockets";
+import { FEATURE_COLORS } from "../../styles/colors/features";
 
 interface Comment {
   author: string;
@@ -10,16 +13,46 @@ interface Comment {
 
 const Chat = () => {
   const [comments, setComments] = useState<Comment[]>([]);
-  const [state, setState] = useState<
-    Record<string, RTCSessionDescription | null>
-  >({
-    offer: null,
-    answer: null,
-  });
+  const [offers, setOffers] = useState<Record<string, RTCSessionDescription>>(
+    {}
+  );
   const inputRef = useRef<HTMLInputElement>(null);
   const commentsRef = useRef<HTMLDivElement>(null);
+  const { offer } = useWebRtcOffer();
   const { socket } = useSocket("/signaling");
-  console.log(socket);
+  useEffect(() => {
+    console.log(offers);
+  }, [offers]);
+  useEffect(() => {
+    socket?.on(EVENT.OFFERS, (response: OfferResponse[]) => {
+      console.log(response, "offers");
+    });
+    socket?.on(EVENT.OFFER, (response: OfferResponse) => {
+      const { id, offer } = response;
+      console.log(response);
+      setOffers((offers) => Object.assign(offers, { [id]: offer }));
+    });
+    socket?.on(EVENT.DELETE_OFFER, (response: string) => {
+      setOffers((offers) => {
+        console.log(response, "disconnected", offers);
+        delete offers[response];
+        return offers;
+      });
+    });
+  }, [socket]);
+  useEffect(() => {
+    if (offer && socket) {
+      socket.emit(EVENT.OFFER_SDP, { offer }, (response: OfferSDPResponse) => {
+        if (response.status === 200) {
+          console.log(
+            "%cSuccess Offer Signaling",
+            `color: ${FEATURE_COLORS.SUCCESS}`
+          );
+        }
+      });
+    }
+  }, [offer, socket]);
+
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
@@ -63,6 +96,7 @@ const Chat = () => {
           );
         })}
       </div>
+      {Object.keys(offers).map((key) => key)}
       <form onSubmit={handleSubmit}>
         <input type="text" ref={inputRef} />
       </form>

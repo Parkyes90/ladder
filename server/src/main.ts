@@ -7,8 +7,34 @@ const io = new Server(httpServer, {
 });
 const PORT = 8000;
 
+type RTCSessionDescription = {
+  type: string;
+  sdp: string;
+};
+const SDP_OFFER_LIST: Record<string, RTCSessionDescription> = {};
+
+enum EVENT {
+  OFFERS = "offers",
+  OFFER_SDP = "offerSDP",
+  OFFER = "offer",
+  DELETE_OFFER = "deleteOffer",
+}
+
 io.on("connection", (socket: Socket) => {
-  console.log("connected", socket.handshake.query);
+  io.to(socket.id).emit(EVENT.OFFERS, SDP_OFFER_LIST);
+
+  socket.on(EVENT.OFFER_SDP, (args, callback) => {
+    const { offer } = args;
+    SDP_OFFER_LIST[socket.id] = offer;
+    callback({
+      status: 200,
+    });
+    socket.broadcast.emit(EVENT.OFFER, { id: socket.id, offer });
+  });
+  socket.on("disconnect", () => {
+    delete SDP_OFFER_LIST[socket.id];
+    socket.broadcast.emit(EVENT.DELETE_OFFER, socket.id);
+  });
 });
 
 httpServer.listen(PORT, () => {

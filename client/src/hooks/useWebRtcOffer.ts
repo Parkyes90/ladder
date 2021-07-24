@@ -17,7 +17,6 @@ export const useWebRtcOffer = (answer?: RTCSessionDescription | null) => {
       };
     }
     localConnection.onicecandidate = () => {
-      console.log(localConnection.localDescription);
       setOffer(localConnection.localDescription);
     };
     localConnection.createOffer().then((o) => {

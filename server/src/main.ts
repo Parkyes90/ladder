@@ -14,20 +14,21 @@ type RTCSessionDescription = {
 const SDP_OFFER_LIST: Record<string, RTCSessionDescription> = {};
 
 enum EVENT {
-  OFFERS = "offers",
   OFFER_SDP = "offerSDP",
-  DELETE_OFFER = "deleteOffer",
   SEND_MESSAGE = "sendMessage",
 }
 
 enum CLIENT_EVENT {
+  OFFERS = "offers",
   GET_MESSAGE = "getMessage",
   OFFER = "offer",
+  DELETE_OFFER = "deleteOffer",
+  COUNT = "count",
 }
 
 io.on("connection", (socket: Socket) => {
-  io.to(socket.id).emit(EVENT.OFFERS, SDP_OFFER_LIST);
-
+  io.to(socket.id).emit(CLIENT_EVENT.COUNT, io.engine.clientsCount);
+  socket.broadcast.emit(CLIENT_EVENT.COUNT, io.engine.clientsCount);
   socket.on(EVENT.OFFER_SDP, (args, callback) => {
     const { offer } = args;
     SDP_OFFER_LIST[socket.id] = offer;
@@ -37,17 +38,14 @@ io.on("connection", (socket: Socket) => {
     socket.broadcast.emit(CLIENT_EVENT.OFFER, { id: socket.id, offer });
   });
   socket.on(EVENT.SEND_MESSAGE, (args, callback) => {
-    const payload = {
-      id: socket.handshake.query.clientId,
-      content: args,
-    };
-    socket.broadcast.emit(CLIENT_EVENT.GET_MESSAGE, payload);
-    callback(payload);
+    socket.broadcast.emit(CLIENT_EVENT.GET_MESSAGE, args);
+    callback(args);
   });
 
   socket.on("disconnect", () => {
     delete SDP_OFFER_LIST[socket.id];
-    socket.broadcast.emit(EVENT.DELETE_OFFER, socket.id);
+    socket.broadcast.emit(CLIENT_EVENT.DELETE_OFFER, socket.id);
+    socket.broadcast.emit(CLIENT_EVENT.COUNT, io.engine.clientsCount);
   });
 });
 

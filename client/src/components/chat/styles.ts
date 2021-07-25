@@ -47,3 +47,10 @@ export const CommentWrapper = styled.div`
   word-break: break-all;
   padding: ${pxToRem(4, 8)};
 `;
+
+export const Title = styled.div`
+  font-weight: 700;
+  background-color: ${BASE_COLORS.BLUE_GREY_940};
+  color: ${BASE_COLORS.WHITE};
+  padding: ${pxToRem(16, 8)};
+`;

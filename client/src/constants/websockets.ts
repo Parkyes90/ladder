@@ -1,11 +1,14 @@
 export enum EVENT {
   OFFER = "offer",
+  GET_MESSAGE = "getMessage",
+  DELETE_OFFER = "deleteOffer",
+  COUNT = "count",
 }
 
 export enum SERVER_EVENT {
   OFFER_SDP = "offerSDP",
   OFFERS = "offers",
-  DELETE_OFFER = "deleteOffer",
+  SEND_MESSAGE = "sendMessage",
 }
 
 export type OfferSDPResponse = {

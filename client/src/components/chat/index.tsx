@@ -3,7 +3,12 @@ import * as localforage from "localforage";
 import { CommentWrapper, Wrapper } from "./styles";
 import { useSocket } from "../../hooks/useSocket";
 import { useWebRtcOffer } from "../../hooks/useWebRtcOffer";
-import { EVENT, OfferResponse, OfferSDPResponse } from "constants/websockets";
+import {
+  EVENT,
+  OfferResponse,
+  OfferSDPResponse,
+  SERVER_EVENT,
+} from "constants/websockets";
 import { FEATURE_COLORS } from "../../styles/colors/features";
 
 interface Comment {
@@ -24,7 +29,7 @@ const Chat = () => {
     console.log(offers);
   }, [offers]);
   useEffect(() => {
-    socket?.on(EVENT.OFFERS, (response: OfferResponse[]) => {
+    socket?.on(SERVER_EVENT.OFFERS, (response: OfferResponse[]) => {
       console.log(response, "offers");
     });
     socket?.on(EVENT.OFFER, (response: OfferResponse) => {
@@ -32,7 +37,7 @@ const Chat = () => {
       console.log(response);
       setOffers((offers) => Object.assign(offers, { [id]: offer }));
     });
-    socket?.on(EVENT.DELETE_OFFER, (response: string) => {
+    socket?.on(SERVER_EVENT.DELETE_OFFER, (response: string) => {
       setOffers((offers) => {
         console.log(response, "disconnected", offers);
         delete offers[response];
@@ -42,14 +47,18 @@ const Chat = () => {
   }, [socket]);
   useEffect(() => {
     if (offer && socket) {
-      socket.emit(EVENT.OFFER_SDP, { offer }, (response: OfferSDPResponse) => {
-        if (response.status === 200) {
-          console.log(
-            "%cSuccess Offer Signaling",
-            `color: ${FEATURE_COLORS.SUCCESS}`
-          );
+      socket.emit(
+        SERVER_EVENT.OFFER_SDP,
+        { offer },
+        (response: OfferSDPResponse) => {
+          if (response.status === 200) {
+            console.log(
+              "%cSuccess Offer Signaling",
+              `color: ${FEATURE_COLORS.SUCCESS}`
+            );
+          }
         }
-      });
+      );
     }
   }, [offer, socket]);
 

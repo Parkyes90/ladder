@@ -1,6 +1,9 @@
 export enum EVENT {
-  OFFER_SDP = "offerSDP",
   OFFER = "offer",
+}
+
+export enum SERVER_EVENT {
+  OFFER_SDP = "offerSDP",
   OFFERS = "offers",
   DELETE_OFFER = "deleteOffer",
 }

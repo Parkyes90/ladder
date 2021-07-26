@@ -8,7 +8,7 @@ export const ChatWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   background-color: ${BASE_COLORS.BLUE_GREY_920};
-  height: ${pxToRem(400)};
+  height: ${pxToRem(200)};
 
   div {
     flex: 1;
@@ -30,7 +30,9 @@ export const ChatWrapper = styled.div`
       background: ${BASE_COLORS.BLUE_GREY_700};
     }
   }
-
+  form {
+    display: flex;
+  }
   input {
     width: 100%;
     margin-top: auto;

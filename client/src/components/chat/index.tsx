@@ -14,6 +14,7 @@ const Chat = () => {
   const [comments, setComments] = useState<Comment[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const commentsRef = useRef<HTMLDivElement>(null);
+  const [clientId, setClientId] = useState<null | string | undefined>(null);
   const { socket } = useSocket("/signaling");
   const [sessionCount, setSessionCount] = useState(0);
 
@@ -34,10 +35,13 @@ const Chat = () => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
-    localforage.getItem("chat").then((value) => {
+    localforage.getItem(KEY.CHAT).then((value) => {
       if (value) {
         setComments(value as Comment[]);
       }
+    });
+    localforage.getItem<string>(KEY.CLIENT_ID).then((value) => {
+      setClientId(value?.split("-")[0]);
     });
   }, []);
 
@@ -72,9 +76,10 @@ const Chat = () => {
       <ChatWrapper>
         <div ref={commentsRef}>
           {comments.map((comment, index) => {
+            const id = comment.clientId.split("-")[0];
             return (
-              <CommentWrapper key={index}>{`${
-                comment.clientId.split("-")[0]
+              <CommentWrapper key={index}>{`${comment.clientId.split("-")[0]}${
+                clientId === id ? "*" : ""
               } > ${comment.content}`}</CommentWrapper>
             );
           })}

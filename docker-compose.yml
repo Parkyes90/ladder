@@ -1,6 +1,9 @@
 version: "3.8"
 services:
   nginx:
+    depends_on:
+      - client
+      - signaling
     restart: always
     build:
       context: ./nginx

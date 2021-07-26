@@ -11,7 +11,11 @@ const Ladder = () => {
 
   return (
     <LadderContext.Provider value={{ ...state, setState }}>
-      {state.isStart ? <div>Ladder</div> : <PreparePage />}
+      {state.isStart ? (
+        <div>Ladder Participants: {state.participants}</div>
+      ) : (
+        <PreparePage />
+      )}
     </LadderContext.Provider>
   );
 };

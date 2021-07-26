@@ -3,17 +3,12 @@ import React from "react";
 import styled from "styled-components";
 import { BASE_COLORS } from "../styles";
 import Chat from "components/chat";
+import Main from "components/main";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
   background-color: ${BASE_COLORS.BLUE_GREY_25};
-`;
-
-const Main = styled.main`
-  display: flex;
-  width: 100%;
-  flex: 1;
 `;
 
 const Footer = styled.footer`
@@ -28,9 +23,7 @@ function App() {
   return (
     <Wrapper>
       <Header />
-      <Main>
-        <div>Test</div>
-      </Main>
+      <Main />
       <Footer>
         <Chat />
       </Footer>

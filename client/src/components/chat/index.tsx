@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import * as localforage from "localforage";
-import { CommentWrapper, Title, Wrapper } from "./styles";
+import { ChatWrapper, CommentWrapper, Title, Wrapper } from "./styles";
 import { useSocket } from "../../hooks/useSocket";
 import { EVENT, SERVER_EVENT } from "constants/websockets";
 import { KEY } from "../../constants/localforages";
@@ -67,9 +67,9 @@ const Chat = () => {
   };
 
   return (
-    <div>
+    <Wrapper>
       <Title>ChatRoom ({sessionCount})</Title>
-      <Wrapper>
+      <ChatWrapper>
         <div ref={commentsRef}>
           {comments.map((comment, index) => {
             return (
@@ -82,8 +82,8 @@ const Chat = () => {
         <form onSubmit={handleSubmit}>
           <input type="text" ref={inputRef} />
         </form>
-      </Wrapper>
-    </div>
+      </ChatWrapper>
+    </Wrapper>
   );
 };
 

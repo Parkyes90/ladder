@@ -1,7 +1,9 @@
 import styled from "styled-components";
 import { BASE_COLORS, pxToRem } from "../../styles";
-
 export const Wrapper = styled.div`
+  width: 100%;
+`;
+export const ChatWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;

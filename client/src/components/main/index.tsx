@@ -3,7 +3,7 @@ import { pxToRem } from "../../styles";
 import Ladder from "../ladder";
 
 const Wrapper = styled.main`
-  padding: ${pxToRem(16)};
+  padding: ${pxToRem(64)};
   display: flex;
   flex: 1;
   align-items: center;

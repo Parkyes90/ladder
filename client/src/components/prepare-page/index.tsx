@@ -41,7 +41,7 @@ export const PreparePage = () => {
           <OperatorButton onClick={handleClickMinus} type="button">
             -
           </OperatorButton>
-          <Input type="number" value={participants} min={2} max={24} />
+          <Input type="number" value={participants} min={2} max={24} readOnly />
           <OperatorButton onClick={handleClickPlus} type="button">
             +
           </OperatorButton>

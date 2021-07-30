@@ -2,6 +2,7 @@ import { useContext, useEffect, useRef } from "react";
 import { LadderContext } from "../ladder/context";
 import { Wrapper } from "components/chat/styles";
 import { ParticipantsWrapper } from "./styles";
+import _ from "lodash";
 
 const MAX_HEIGHT = 12;
 
@@ -9,12 +10,31 @@ const Game = () => {
   const { participants } = useContext(LadderContext);
   const ladderWrapper = useRef<HTMLDivElement>(null);
   const ladder = useRef<HTMLCanvasElement>(null);
-
+  const drawRowLine = () => {
+    return _.range(MAX_HEIGHT).reduce((acc: any[], row) => {
+      return acc.concat(
+        _.range(participants).map((col) => {
+          return (
+            <div
+              key={`${row}${col}`}
+              style={{
+                position: "absolute",
+                left: col * 100,
+                top: row * 25,
+                width: 20,
+                height: 20,
+                background: "yellow",
+              }}
+            />
+          );
+        })
+      );
+    }, []);
+  };
   useEffect(() => {
     if (!ladderWrapper.current || !ladder.current) {
       return () => {};
     }
-    console.log(ladder.current);
   }, []);
 
   const style = {
@@ -27,8 +47,9 @@ const Game = () => {
       <ParticipantsWrapper>{participants}</ParticipantsWrapper>
       <div
         ref={ladderWrapper}
-        style={{ ...style, backgroundColor: "lightgray" }}
+        style={{ ...style, backgroundColor: "lightgray", position: "relative" }}
       >
+        {drawRowLine()}
         <canvas ref={ladder} style={style} />
       </div>
     </Wrapper>

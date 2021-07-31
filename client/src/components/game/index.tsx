@@ -10,6 +10,34 @@ const Game = () => {
   const { participants } = useContext(LadderContext);
   const ladderWrapper = useRef<HTMLDivElement>(null);
   const ladder = useRef<HTMLCanvasElement>(null);
+  const footPrint: any = {};
+  const setRandomNode = () => {
+    _.range(MAX_HEIGHT).forEach((row) => {
+      _.range(participants).forEach((col) => {
+        const node = `${col}-${row}`;
+        const rand = Math.floor(Math.random() * 2);
+        if (rand === 0) {
+          footPrint[node] = { change: false, draw: false };
+        } else {
+          if (col === participants - 1) {
+            footPrint[node] = { change: false, draw: false };
+          } else {
+            footPrint[node] = { change: true, draw: true };
+            footPrint[`${col + 1}-${row}`] = { change: true, draw: false };
+          }
+        }
+      });
+    });
+  };
+  const setDefaultFootPrint = () => {
+    _.range(MAX_HEIGHT).forEach((row) => {
+      _.range(participants).forEach((col) => {
+        const node = `${col}-${row}`;
+        footPrint[node] = false;
+      });
+    });
+  };
+
   const drawRowLine = () => {
     return _.range(MAX_HEIGHT).reduce((acc: any[], row) => {
       return acc.concat(

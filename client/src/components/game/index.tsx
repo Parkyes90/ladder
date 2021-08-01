@@ -38,6 +38,31 @@ const Game = () => {
     });
   };
 
+  const drawDefaultLine = () => {
+    return (
+      <table>
+        {_.range(MAX_HEIGHT).reduce((acc: any[], row) => {
+          return acc.concat(
+            _.range(participants).map((col) => {
+              return (
+                <tr
+                  key={`${row}${col}`}
+                  style={{
+                    position: "absolute",
+                    width: 98,
+                    height: 25,
+                    borderLeft: "2px solid #ddd",
+                    borderRight: "2px solid #ddd",
+                  }}
+                />
+              );
+            })
+          );
+        }, [])}
+      </table>
+    );
+  };
+
   const drawRowLine = () => {
     return _.range(MAX_HEIGHT).reduce((acc: any[], row) => {
       return acc.concat(
@@ -78,6 +103,7 @@ const Game = () => {
         style={{ ...style, backgroundColor: "lightgray", position: "relative" }}
       >
         {drawRowLine()}
+        {drawDefaultLine()}
         <canvas ref={ladder} style={style} />
       </div>
     </Wrapper>

@@ -6,6 +6,15 @@ import _ from "lodash";
 
 const MAX_HEIGHT = 12;
 
+interface StokeLineProps {
+  row: number;
+  col: number;
+  flag: string;
+  dir: string;
+  color: string;
+  width: string;
+}
+
 const Game = () => {
   const { participants } = useContext(LadderContext);
   const ladderWrapper = useRef<HTMLDivElement>(null);
@@ -84,6 +93,65 @@ const Game = () => {
       );
     }, []);
   };
+
+  const drawNodeLine = () => {
+    _.range(MAX_HEIGHT).forEach((row) => {
+      _.range(participants).forEach((col) => {
+        const node = `${col}-${row}`;
+        const info = footprint[node];
+        if (info.ch && info.draw) {
+          stokeLine({
+            row,
+            col,
+            flag: "w",
+            dir: "r",
+            color: "#ddd",
+            width: "2",
+          });
+        }
+      });
+    });
+  };
+  const stokeLine = ({ row, col, color, dir, flag, width }: StokeLineProps) => {
+    const ctx = ladder.current?.getContext("2d");
+    let moveToStart;
+    let moveToEnd;
+    let lineToStart;
+    let lineToEnd;
+    const eachWidth = 100;
+    const eachHeight = 25;
+    if (flag == "w") {
+      if (dir == "r") {
+        ctx?.beginPath();
+        moveToStart = row * eachWidth;
+        moveToEnd = col * eachHeight;
+        lineToStart = (row + 1) * eachWidth;
+        lineToEnd = col * eachHeight;
+      } else {
+        ctx?.beginPath();
+        moveToStart = row * eachWidth;
+        moveToEnd = col * eachHeight;
+        lineToStart = (row - 1) * eachWidth;
+        lineToEnd = col * eachHeight;
+      }
+    } else {
+      ctx?.beginPath();
+      moveToStart = row * eachWidth;
+      moveToEnd = col * eachHeight;
+      lineToStart = row * eachWidth;
+      lineToEnd = (col + 1) * eachHeight;
+    }
+
+    ctx?.moveTo(moveToStart + 3, moveToEnd + 2);
+    ctx?.lineTo(lineToStart + 3, lineToEnd + 2);
+    Object.assign(ctx, {
+      strokeStyle: color,
+      lineWidth: width,
+    });
+    ctx?.stroke();
+    ctx?.closePath();
+  };
+
   useEffect(() => {
     if (!ladderWrapper.current || !ladder.current) {
       return () => {};

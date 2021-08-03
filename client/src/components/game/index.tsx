@@ -20,6 +20,7 @@ const Game = () => {
   const ladderWrapper = useRef<HTMLDivElement>(null);
   const ladder = useRef<HTMLCanvasElement>(null);
   const footprint: any = {};
+  const usersEntry: any = {};
   const setRandomNode = () => {
     _.range(MAX_HEIGHT).forEach((row) => {
       _.range(participants).forEach((col) => {
@@ -44,6 +45,35 @@ const Game = () => {
         const node = `${col}-${row}`;
         footprint[node] = false;
       });
+    });
+  };
+
+  const setUsersEntry = () => {
+    _.range(MAX_HEIGHT).forEach((row) => {
+      usersEntry[row] = _.range(participants).map((col) => `${col}-${row}`);
+    });
+  };
+
+  const users = () => {
+    const user = usersEntry[0];
+    return _.range(usersEntry.length).map((i) => {
+      const letters = "0123456789ABCDEF";
+      const color = `#${_.range(4)
+        .map(() => letters[Math.floor(Math.random() * letters.length)])
+        .join("")}`;
+      const row = +user[i].split("-")[0];
+      const col = +user[i].split("-")[1];
+      const left = row * 100 - 30;
+      return (
+        <div style={{ left }}>
+          <input type="text" data-node={user[i]} />
+          <button
+            style={{ backgroundColor: color }}
+            data-color={color}
+            data-node={user[i]}
+          />
+        </div>
+      );
     });
   };
 

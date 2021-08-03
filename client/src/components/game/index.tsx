@@ -61,9 +61,8 @@ const Game = () => {
       const color = `#${_.range(4)
         .map(() => letters[Math.floor(Math.random() * letters.length)])
         .join("")}`;
-      const row = +user[i].split("-")[0];
-      const col = +user[i].split("-")[1];
-      const left = row * 100 - 30;
+      const col = +user[i].split("-")[0];
+      const left = col * 100 - 30;
       return (
         <div style={{ left }}>
           <input type="text" data-node={user[i]} />
@@ -72,6 +71,23 @@ const Game = () => {
             data-color={color}
             data-node={user[i]}
           />
+        </div>
+      );
+    });
+  };
+
+  const results = () => {
+    const result = usersEntry[MAX_HEIGHT - 1];
+
+    return _.range(result.length).map((i) => {
+      const col = +result[i].split("-")[0];
+      const row = +result[i].split("-")[1] + 1;
+      const node = `${row}-${col}`;
+      const left = col * 100 - 30;
+      return (
+        <div style={{ left }}>
+          <input type="text" data-node={node} />
+          <p id={`${node}-user`} />
         </div>
       );
     });

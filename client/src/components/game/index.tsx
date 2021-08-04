@@ -209,6 +209,10 @@ const Game = () => {
     height: (MAX_HEIGHT - 1) * 25 + 6,
   };
 
+  setDefaultFootPrint();
+  setRandomNode();
+  drawNodeLine();
+
   return (
     <Wrapper>
       <ParticipantsWrapper>{participants}</ParticipantsWrapper>
@@ -218,6 +222,8 @@ const Game = () => {
       >
         {drawRowLine()}
         {drawDefaultLine()}
+        {users()}
+        {results()}
         <canvas ref={ladder} style={style} />
       </div>
     </Wrapper>

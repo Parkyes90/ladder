@@ -454,7 +454,7 @@ const Game = () => {
       <div
         className="ladder"
         ref={ladderWrapper}
-        style={{ ...style, backgroundColor: "lightgray", position: "relative" }}
+        style={{ ...style, position: "relative" }}
       >
         {drawRowLine()}
         {drawDefaultLine()}

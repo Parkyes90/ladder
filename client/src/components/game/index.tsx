@@ -3,6 +3,7 @@ import { LadderContext } from "../ladder/context";
 import { Wrapper } from "components/chat/styles";
 import { ParticipantsWrapper } from "./styles";
 import _ from "lodash";
+import "./styles.css";
 
 const MAX_HEIGHT = 12;
 
@@ -64,7 +65,7 @@ const Game = () => {
       const col = +user[i].split("-")[0];
       const left = col * 100 - 30;
       return (
-        <div style={{ left }}>
+        <div style={{ left }} key={i}>
           <input type="text" data-node={user[i]} />
           <button
             style={{ backgroundColor: color }}
@@ -85,7 +86,7 @@ const Game = () => {
       const node = `${row}-${col}`;
       const left = col * 100 - 30;
       return (
-        <div style={{ left }}>
+        <div style={{ left }} key={i}>
           <input type="text" data-node={node} />
           <p id={`${node}-user`} />
         </div>
@@ -96,24 +97,26 @@ const Game = () => {
   const drawDefaultLine = () => {
     return (
       <table>
-        {_.range(MAX_HEIGHT).reduce((acc: any[], row) => {
-          return acc.concat(
-            _.range(participants).map((col) => {
-              return (
-                <tr
-                  key={`${row}${col}`}
-                  style={{
-                    position: "absolute",
-                    width: 98,
-                    height: 25,
-                    borderLeft: "2px solid #ddd",
-                    borderRight: "2px solid #ddd",
-                  }}
-                />
-              );
-            })
-          );
-        }, [])}
+        <tbody>
+          {_.range(MAX_HEIGHT).reduce((acc: any[], row) => {
+            return acc.concat(
+              _.range(participants).map((col) => {
+                return (
+                  <tr
+                    key={`${row}${col}`}
+                    style={{
+                      position: "absolute",
+                      width: 98,
+                      height: 25,
+                      borderLeft: "2px solid #ddd",
+                      borderRight: "2px solid #ddd",
+                    }}
+                  />
+                );
+              })
+            );
+          }, [])}
+        </tbody>
       </table>
     );
   };
@@ -166,8 +169,8 @@ const Game = () => {
     let lineToEnd;
     const eachWidth = 100;
     const eachHeight = 25;
-    if (flag == "w") {
-      if (dir == "r") {
+    if (flag === "w") {
+      if (dir === "r") {
         ctx?.beginPath();
         moveToStart = row * eachWidth;
         moveToEnd = col * eachHeight;
@@ -211,6 +214,7 @@ const Game = () => {
 
   setDefaultFootPrint();
   setRandomNode();
+  setUsersEntry();
   drawNodeLine();
 
   return (

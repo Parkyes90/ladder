@@ -7,7 +7,6 @@ export const ChatWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  background-color: ${BASE_COLORS.BLUE_GREY_920};
   height: ${pxToRem(200)};
 
   div {

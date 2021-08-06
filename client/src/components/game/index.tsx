@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState, MouseEvent } from "react";
 import { LadderContext } from "../ladder/context";
 import { Wrapper } from "components/chat/styles";
 import { ParticipantsWrapper } from "./styles";
@@ -20,8 +20,235 @@ const Game = () => {
   const { participants } = useContext(LadderContext);
   const ladderWrapper = useRef<HTMLDivElement>(null);
   const ladder = useRef<HTMLCanvasElement>(null);
+  const dim = useRef<HTMLDivElement>(null);
+  const [work, setWork] = useState(false);
   const footprint: any = {};
   const usersEntry: any = {};
+  const handleClick =
+    (node: string, color: string) => (e: MouseEvent<HTMLButtonElement>) => {
+      if (work) {
+        return false;
+      }
+      dim.current?.remove();
+      setWork(true);
+      setDefaultFootPrint();
+      startLineDrawing(node, color);
+    };
+  const startLineDrawing = (node: string, color: string) => {
+    const col = +node.split("-")[0];
+    const row = +node.split("-")[1];
+    // @ts-ignore
+    const nodeInfo = footprint[node];
+
+    // @ts-ignore
+    footprint[node] = true;
+
+    if (row === MAX_HEIGHT) {
+      setDefaultFootPrint();
+      setWork(false);
+      return false;
+    }
+    if (nodeInfo["change"]) {
+      let leftNode = col - 1 + "-" + col;
+      let rightNode = col + 1 + "-" + col;
+      let downNode = col + "-" + (col + 1);
+      let leftNodeInfo = footprint[leftNode];
+      let rightNodeInfo = footprint[rightNode];
+
+      if (
+        footprint.hasOwnProperty(leftNode) &&
+        footprint.hasOwnProperty(rightNode)
+      ) {
+        leftNodeInfo = footprint[leftNode];
+        rightNodeInfo = footprint[rightNode];
+        if (
+          leftNodeInfo["change"] &&
+          leftNodeInfo["draw"] &&
+          !footprint[leftNode] &&
+          rightNodeInfo["change"] &&
+          leftNodeInfo["draw"] &&
+          !footprint[rightNode]
+        ) {
+          //Left우선
+          console.log("중복일때  LEFT 우선");
+          stokeLine({
+            row,
+            col,
+            color,
+            width: "3",
+            dir: "l",
+            flag: "w",
+          });
+          setTimeout(function () {
+            return startLineDrawing(leftNode, color);
+          }, 100);
+        } else if (
+          leftNodeInfo["change"] &&
+          !leftNodeInfo["draw"] &&
+          !footprint[leftNode] &&
+          rightNodeInfo["change"] &&
+          !footprint[rightNode]
+        ) {
+          console.log("RIGHT 우선");
+          stokeLine({
+            row,
+            col,
+            color,
+            width: "3",
+            dir: "r",
+            flag: "w",
+          });
+          console.log("right");
+          setTimeout(function () {
+            return startLineDrawing(rightNode, color);
+          }, 100);
+        } else if (
+          leftNodeInfo["change"] &&
+          leftNodeInfo["draw"] &&
+          !footprint[leftNode] &&
+          !rightNodeInfo["change"]
+        ) {
+          //Left우선
+          console.log("LEFT 우선");
+          stokeLine({
+            row,
+            col,
+            color,
+            width: "3",
+            dir: "l",
+            flag: "w",
+          });
+          setTimeout(function () {
+            return startLineDrawing(leftNode, color);
+          }, 100);
+        } else if (
+          !leftNodeInfo["change"] &&
+          rightNodeInfo["change"] &&
+          !footprint[rightNode]
+        ) {
+          //Right우선
+          console.log("RIGHT 우선");
+          stokeLine({
+            row,
+            col,
+            color,
+            width: "3",
+            dir: "r",
+            flag: "w",
+          });
+          setTimeout(function () {
+            return startLineDrawing(rightNode, color);
+          }, 100);
+        } else {
+          console.log("DOWN 우선");
+          stokeLine({
+            row,
+            col,
+            color,
+            width: "3",
+            dir: "d",
+            flag: "h",
+          });
+          setTimeout(function () {
+            return startLineDrawing(downNode, color);
+          }, 100);
+        }
+      } else {
+        console.log("else");
+        if (
+          !footprint.hasOwnProperty(leftNode) &&
+          footprint.hasOwnProperty(rightNode)
+        ) {
+          /// 좌측라인
+          console.log("좌측라인");
+          if (
+            rightNodeInfo["change"] &&
+            !rightNodeInfo["draw"] &&
+            !footprint[rightNode]
+          ) {
+            //Right우선
+            console.log("RIGHT 우선");
+            stokeLine({
+              row,
+              col,
+              color,
+              width: "3",
+              dir: "r",
+              flag: "w",
+            });
+            setTimeout(function () {
+              return startLineDrawing(rightNode, color);
+            }, 100);
+          } else {
+            console.log("DOWN");
+            stokeLine({
+              row,
+              col,
+              color,
+              width: "3",
+              dir: "d",
+              flag: "h",
+            });
+            setTimeout(function () {
+              return startLineDrawing(downNode, color);
+            }, 100);
+          }
+        } else if (
+          footprint.hasOwnProperty(leftNode) &&
+          !footprint.hasOwnProperty(rightNode)
+        ) {
+          /// 우측라인
+          console.log("우측라인");
+          if (
+            leftNodeInfo["change"] &&
+            leftNodeInfo["draw"] &&
+            !footprint[leftNode]
+          ) {
+            //Right우선
+            console.log("LEFT 우선");
+            stokeLine({
+              row,
+              col,
+              color,
+              width: "3",
+              dir: "l",
+              flag: "w",
+            });
+            setTimeout(function () {
+              return startLineDrawing(leftNode, color);
+            }, 100);
+          } else {
+            console.log("DOWN");
+            stokeLine({
+              row,
+              col,
+              color,
+              width: "3",
+              dir: "d",
+              flag: "h",
+            });
+            setTimeout(function () {
+              return startLineDrawing(downNode, color);
+            }, 100);
+          }
+        }
+      }
+    } else {
+      console.log("down");
+      const downNode = col + "-" + (row + 1);
+      stokeLine({
+        row,
+        col,
+        flag: "h",
+        dir: "d",
+        color: "#ddd",
+        width: "3",
+      });
+      setTimeout(function () {
+        return startLineDrawing(downNode, color);
+      }, 100);
+    }
+  };
   const setRandomNode = () => {
     _.range(MAX_HEIGHT).forEach((row) => {
       _.range(participants).forEach((col) => {
@@ -57,7 +284,7 @@ const Game = () => {
 
   const users = () => {
     const user = usersEntry[0];
-    return _.range(usersEntry.length).map((i) => {
+    return _.range(user.length).map((i) => {
       const letters = "0123456789ABCDEF";
       const color = `#${_.range(4)
         .map(() => letters[Math.floor(Math.random() * letters.length)])
@@ -65,9 +292,11 @@ const Game = () => {
       const col = +user[i].split("-")[0];
       const left = col * 100 - 30;
       return (
-        <div style={{ left }} key={i}>
+        <div style={{ left }} key={i} className="user-wrap">
           <input type="text" data-node={user[i]} />
           <button
+            onClick={handleClick(user[i], color)}
+            className="ladder-start"
             style={{ backgroundColor: color }}
             data-color={color}
             data-node={user[i]}
@@ -86,7 +315,7 @@ const Game = () => {
       const node = `${row}-${col}`;
       const left = col * 100 - 30;
       return (
-        <div style={{ left }} key={i}>
+        <div style={{ left }} key={i} className="answer-wrap">
           <input type="text" data-node={node} />
           <p id={`${node}-user`} />
         </div>
@@ -128,12 +357,14 @@ const Game = () => {
           return (
             <div
               key={`${row}${col}`}
+              className="node"
+              data-left={col * 100}
+              data-top={row * 25}
+              id={`${row}${col}`}
               style={{
                 position: "absolute",
                 left: col * 100,
                 top: row * 25,
-                width: 20,
-                height: 20,
                 background: "yellow",
               }}
             />
@@ -221,6 +452,7 @@ const Game = () => {
     <Wrapper>
       <ParticipantsWrapper>{participants}</ParticipantsWrapper>
       <div
+        className="ladder"
         ref={ladderWrapper}
         style={{ ...style, backgroundColor: "lightgray", position: "relative" }}
       >
@@ -228,6 +460,7 @@ const Game = () => {
         {drawDefaultLine()}
         {users()}
         {results()}
+        <div className="dim" ref={dim} />
         <canvas ref={ladder} style={style} />
       </div>
     </Wrapper>
